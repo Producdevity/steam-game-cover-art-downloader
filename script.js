@@ -55,6 +55,7 @@ function updateImages() {
 
 async function downloadZip() {
   const appId = document.getElementById("appIdInput").value.trim();
+  console.log("Start download zip for ", appId);
   if (!appId) {
     alert("Please enter a valid Steam APP_ID.");
     return;
