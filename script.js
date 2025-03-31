@@ -105,5 +105,4 @@ const toggleModeSwitch = document.querySelector("#toggleMode");
 
 toggleModeSwitch.addEventListener("change", () => toggleMode());
 zipButton.addEventListener("click", () => downloadZip());
-
-showArtButton.addEventListener("change", () => updateImages());
+showArtButton.addEventListener("click", () => updateImages());
