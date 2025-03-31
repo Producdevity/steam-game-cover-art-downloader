@@ -1,4 +1,5 @@
 // Global state for the current mode: "vertical" or "horizontal"
+// https://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json
 let currentMode = "vertical";
 
 function toggleMode() {
