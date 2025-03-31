@@ -24,6 +24,7 @@ function updateImages() {
   // const appId = document.getElementById("appIdInput").value.trim();
   const appId = document.querySelector("#appIdInput").value.trim();
 
+  console.log("update Images for ", appId);
   if (!appId) {
     alert("Please enter a valid Steam APP_ID.");
     return;
@@ -102,6 +103,7 @@ const zipButton = document.querySelector(".zip-button");
 const showArtButton = document.querySelector(".show-art-button");
 const toggleModeSwitch = document.querySelector("#toggleMode");
 
-toggleModeSwitch.addEventListener("change", toggleMode, false);
-zipButton.addEventListener("click", downloadZip, false);
-showArtButton.addEventListener("change", updateImages, false);
+toggleModeSwitch.addEventListener("change", () => toggleMode());
+zipButton.addEventListener("click", () => downloadZip());
+
+showArtButton.addEventListener("change", () => updateImages());
