@@ -1,67 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Steam Game Art Downloader</title>
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="src/styles.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   </head>
   <body>
     <div class="container">
-      <div class="header">
+      <div class="search-section">
         <h1>Steam Game Art Downloader</h1>
         <p>Enter a Steam APP_ID to view game art</p>
-        <input
-          type="text"
-          id="appIdInput"
-          value="264710"
-          placeholder="Enter Steam APP_ID"
-        />
-        <button class="show-art-button">Show Art</button>
-        <div class="toggle-container">
-          <label class="switch">
-            <input type="checkbox" id="toggleMode" />
-            <span class="slider"></span>
-          </label>
-          <span id="toggleLabel">Vertical</span>
+        <div class="input-group">
+          <input type="text" id="appIdInput" value="264710" placeholder="Enter Steam APP_ID" />
+          <button class="show-art-button">Show Art</button>
         </div>
-        <br />
-        <button class="zip-button">Download All as ZIP</button>
+        <div class="controls">
+          <div class="toggle-container">
+            <label class="switch">
+              <input type="checkbox" id="toggleMode" />
+              <span class="slider"></span>
+            </label>
+            <span id="toggleLabel">Vertical</span>
+          </div>
+          <button class="zip-button">Download All as ZIP</button>
+        </div>
       </div>
       <div class="preview" id="previewArea">
         <div class="preview-item">
-          <h3 id="img1Title">Game Cover</h3>
-          <img id="img1" src="" alt="Image 1" onerror="this.src=''" />
-          <br />
-          <a id="img1Download" class="download-button" href="#" download
-            >Download</a
-          >
+          <div class="image-container">
+            <img id="img1" src="" alt="Image 1" onerror="this.src=''" />
+            <div class="overlay">
+              <h3 id="img1Title">Game Cover</h3>
+              <a id="img1Download" class="download-button" href="#" download>
+                <span class="icon">⬇️</span>
+                <span class="text">Download</span>
+              </a>
+            </div>
+          </div>
         </div>
         <div class="preview-item">
-          <h3 id="img2Title">Game Page Background</h3>
-          <img id="img2" src="" alt="Image 2" onerror="this.src=''" />
-          <br />
-          <a id="img2Download" class="download-button" href="#" download
-            >Download</a
-          >
+          <div class="image-container">
+            <img id="img2" src="" alt="Image 2" onerror="this.src=''" />
+            <div class="overlay">
+              <h3 id="img2Title">Game Page Background</h3>
+              <a id="img2Download" class="download-button" href="#" download>
+                <span class="icon">⬇️</span>
+                <span class="text">Download</span>
+              </a>
+            </div>
+          </div>
         </div>
         <div class="preview-item">
-          <h3 id="img3Title">Game Logo</h3>
-          <img id="img3" src="" alt="Image 3" onerror="this.src=''" />
-          <br />
-          <a id="img3Download" class="download-button" href="#" download
-            >Download</a
-          >
+          <div class="image-container">
+            <img id="img3" src="" alt="Image 3" onerror="this.src=''" />
+            <div class="overlay">
+              <h3 id="img3Title">Game Logo</h3>
+              <a id="img3Download" class="download-button" href="#" download>
+                <span class="icon">⬇️</span>
+                <span class="text">Download</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <script src="src/script.js"></script>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

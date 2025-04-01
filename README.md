@@ -1,2 +1,1 @@
-# steam-game-cover-art-downloader
-Created with CodeSandbox
+# Steam Game Cover Art Downloader

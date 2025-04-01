@@ -1,18 +1,40 @@
 {
-  "name": "html-css",
+  "name": "steam-game-cover-art-downloader",
   "version": "1.0.0",
-  "description": "A template for HTML and CSS",
-  "main": "index.html",
-  "scripts": {
-    "start": "serve"
-  },
+  "description": "Steam Game Cover Art Downloader",
   "keywords": [
-    "html",
-    "css"
+    "Steam",
+    "Cover",
+    "Art",
+    "Downloader"
   ],
-  "author": "Ives van Hoorne",
+  "author": "Producdevity - Yassine Gherbi",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
-    "serve": "^14.2.4"
+    "@types/file-saver": "^2.0.7",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.5",
+    "prettier": "^3.5.3",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1"
   }
 }
