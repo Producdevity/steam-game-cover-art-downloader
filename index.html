@@ -9,8 +9,18 @@
       href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
       rel="stylesheet"
     />
+    <style>
+      /* Critical CSS to prevent flash */
+      body.loading .preview {
+        display: none;
+      }
+      .preview {
+        opacity: 0;
+        transform: translateY(2rem);
+      }
+    </style>
   </head>
-  <body>
+  <body class="loading">
     <div class="container">
       <div class="search-section">
         <h1>Steam Game Art Downloader</h1>
@@ -69,7 +79,6 @@
         </div>
       </div>
     </div>
-    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
