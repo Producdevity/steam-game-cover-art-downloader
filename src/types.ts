@@ -10,4 +10,9 @@ export interface GameArtFileNames {
   primary: string
   background: string
   logo: string
-} 
+}
+
+export interface SteamGame {
+  appid: number
+  name: string
+}

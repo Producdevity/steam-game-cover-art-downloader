@@ -2,9 +2,11 @@ import './style.css'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { MODES, getSteamArtUrls, getFileNames } from './utils/steam'
+import { SteamGame } from './types'
+import { AutocompleteInput } from './components/AutocompleteInput/AutocompleteInput'
 
 // Global state for the current mode
-let currentMode = MODES.VERTICAL
+let currentMode: 'vertical' | 'horizontal' = 'vertical'
 let hasSearched = false
 
 /**
@@ -17,7 +19,7 @@ function toggleMode(): void {
   const toggleLabel = document.getElementById('toggleLabel')
   if (!toggleLabel) return
 
-  currentMode = toggle.checked ? MODES.HORIZONTAL : MODES.VERTICAL
+  currentMode = toggle.checked ? 'horizontal' : 'vertical'
   toggleLabel.innerText = toggle.checked ? 'Horizontal' : 'Vertical'
 
   // Update the image titles
@@ -26,7 +28,7 @@ function toggleMode(): void {
   const img3Title = document.getElementById('img3Title')
 
   if (img1Title && img2Title && img3Title) {
-    if (currentMode === MODES.VERTICAL) {
+    if (currentMode === 'vertical') {
       img1Title.innerText = 'Game Cover'
       img2Title.innerText = 'Game Page Background'
       img3Title.innerText = 'Game Logo'
@@ -155,30 +157,90 @@ async function downloadZip(): Promise<void> {
   }
 }
 
-// Initialize event listeners
-document.addEventListener('DOMContentLoaded', () => {
-  // Remove loading class from body
-  document.body.classList.remove('loading')
+function createMainAppHTML(): void {
+  const container = document.querySelector('.container')
+  if (!container) return
 
-  const toggleModeSwitch = document.getElementById('toggleMode') as HTMLInputElement | null
-  const zipButton = document.querySelector<HTMLButtonElement>('.zip-button')
-  const showArtButton = document.querySelector<HTMLButtonElement>('.show-art-button')
-  const appIdInput = document.querySelector<HTMLInputElement>('#appIdInput')
+  container.innerHTML = `
+    <div class="search-section">
+      <h1>Steam Game Art Downloader</h1>
+      <p>Search for a game to view its art</p>
+      <div id="autocomplete-container"></div>
+      <div class="controls">
+        <div class="toggle-container">
+          <label class="switch">
+            <input type="checkbox" id="toggleMode" />
+            <span class="slider"></span>
+          </label>
+          <span id="toggleLabel">Vertical</span>
+        </div>
+        <button class="zip-button">Download All as ZIP</button>
+      </div>
+    </div>
+    <div class="preview" id="previewArea">
+      <div class="preview-item">
+        <div class="image-container">
+          <img id="img1" src="" alt="Image 1" onerror="this.src=''" />
+          <div class="overlay">
+            <h3 id="img1Title">Game Cover</h3>
+            <a id="img1Download" class="download-button" href="#" download>
+              <span class="icon">⬇️</span>
+              <span class="text">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="preview-item">
+        <div class="image-container">
+          <img id="img2" src="" alt="Image 2" onerror="this.src=''" />
+          <div class="overlay">
+            <h3 id="img2Title">Game Page Background</h3>
+            <a id="img2Download" class="download-button" href="#" download>
+              <span class="icon">⬇️</span>
+              <span class="text">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="preview-item">
+        <div class="image-container">
+          <img id="img3" src="" alt="Image 3" onerror="this.src=''" />
+          <div class="overlay">
+            <h3 id="img3Title">Game Logo</h3>
+            <a id="img3Download" class="download-button" href="#" download>
+              <span class="icon">⬇️</span>
+              <span class="text">Download</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+}
 
-  if (!toggleModeSwitch || !zipButton || !showArtButton || !appIdInput) {
-    console.error('Required DOM elements not found')
-    return
-  }
+function setupEventListeners(): void {
+  const toggleMode = document.getElementById('toggleMode') as HTMLInputElement
+  const zipButton = document.querySelector('.zip-button')
+  const autocompleteContainer = document.getElementById('autocomplete-container')
 
-  // Add Enter key support
-  appIdInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
+  if (!toggleMode || !zipButton || !autocompleteContainer) return
+
+  toggleMode.addEventListener('change', toggleMode)
+  zipButton.addEventListener('click', downloadZip)
+
+  // Initialize AutocompleteInput
+  const autocompleteInput = new AutocompleteInput({
+    onSelect: (game: SteamGame) => {
       updateImages()
     }
   })
 
-  toggleModeSwitch.addEventListener('change', toggleMode)
-  zipButton.addEventListener('click', downloadZip)
-  showArtButton.addEventListener('click', updateImages)
+  autocompleteContainer.appendChild(autocompleteInput)
+}
+
+// Initialize event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  createMainAppHTML()
+  setupEventListeners()
+  document.body.classList.remove('loading')
 })
