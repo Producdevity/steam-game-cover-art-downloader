@@ -1,27 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Steam Game Art Downloader</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* Critical CSS to prevent flash */
-      body.loading .preview {
-        display: none;
-      }
-      .preview {
-        opacity: 0;
-        transform: translateY(2rem);
-      }
-    </style>
-  </head>
-  <body class="loading">
-    <div class="container"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Steam Game Art Downloader</title>
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* Critical CSS to prevent flash */
+    body.loading .preview {
+      display: none;
+    }
+    .preview {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+  </style>
+</head>
+<body class="loading">
+<div class="container">
+  <div class="search-section">
+    <h1>Steam Game Art Downloader</h1>
+    <p>Enter a Steam APP_ID to view game art</p>
+    <div class="input-group">
+      <input type="text" id="appIdInput" value="264710" placeholder="Enter Steam APP_ID" />
+      <button class="show-art-button">Show Art</button>
+    </div>
+    <div class="controls">
+      <div class="toggle-container">
+        <label class="switch">
+          <input type="checkbox" id="toggleMode" />
+          <span class="slider"></span>
+        </label>
+        <span id="toggleLabel">Vertical</span>
+      </div>
+      <button class="zip-button">Download All as ZIP</button>
+    </div>
+  </div>
+  <div class="preview" id="previewArea">
+    <div class="preview-item">
+      <div class="image-container">
+        <img id="img1" src="" alt="Image 1" onerror="this.src=''" />
+        <div class="overlay">
+          <h3 id="img1Title">Game Cover</h3>
+          <a id="img1Download" class="download-button" href="#" download>
+            <span class="icon">⬇️</span>
+            <span class="text">Download</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="preview-item">
+      <div class="image-container">
+        <img id="img2" src="" alt="Image 2" onerror="this.src=''" />
+        <div class="overlay">
+          <h3 id="img2Title">Game Page Background</h3>
+          <a id="img2Download" class="download-button" href="#" download>
+            <span class="icon">⬇️</span>
+            <span class="text">Download</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="preview-item">
+      <div class="image-container">
+        <img id="img3" src="" alt="Image 3" onerror="this.src=''" />
+        <div class="overlay">
+          <h3 id="img3Title">Game Logo</h3>
+          <a id="img3Download" class="download-button" href="#" download>
+            <span class="icon">⬇️</span>
+            <span class="text">Download</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="/src/main.ts"></script>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+</body>
 </html>
+

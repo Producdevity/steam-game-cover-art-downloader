@@ -1,26 +1,23 @@
 import './style.css'
-import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
-
-import { AutocompleteInput } from './components/AutocompleteInput/AutocompleteInput'
-import { SteamGame } from './types'
-import { getSteamArtUrls, getFileNames } from './utils/steam'
+import { saveAs } from 'file-saver'
+import { MODES, getSteamArtUrls, getFileNames } from './utils/steam'
 
 // Global state for the current mode
-let currentMode: 'vertical' | 'horizontal' = 'vertical'
+let currentMode = MODES.VERTICAL
 let hasSearched = false
 
 /**
  * Toggles between vertical and horizontal display modes
  */
-function handleToggleMode(): void {
+function toggleMode(): void {
   const toggle = document.getElementById('toggleMode') as HTMLInputElement | null
   if (!toggle) return
 
   const toggleLabel = document.getElementById('toggleLabel')
   if (!toggleLabel) return
 
-  currentMode = toggle.checked ? 'horizontal' : 'vertical'
+  currentMode = toggle.checked ? MODES.HORIZONTAL : MODES.VERTICAL
   toggleLabel.innerText = toggle.checked ? 'Horizontal' : 'Vertical'
 
   // Update the image titles
@@ -29,7 +26,7 @@ function handleToggleMode(): void {
   const img3Title = document.getElementById('img3Title')
 
   if (img1Title && img2Title && img3Title) {
-    if (currentMode === 'vertical') {
+    if (currentMode === MODES.VERTICAL) {
       img1Title.innerText = 'Game Cover'
       img2Title.innerText = 'Game Page Background'
       img3Title.innerText = 'Game Logo'
@@ -40,6 +37,7 @@ function handleToggleMode(): void {
     }
   }
 
+  updateImages()
   if (hasSearched) {
     updateImages()
   }
@@ -58,6 +56,7 @@ function updateImages(): void {
     return
   }
 
+  console.log('Updating images for', appId)
   // Get preview area
   const previewArea = document.getElementById('previewArea')
   if (!previewArea) return
@@ -80,6 +79,9 @@ function updateImages(): void {
   const img2 = document.getElementById('img2') as HTMLImageElement | null
   const img3 = document.getElementById('img3') as HTMLImageElement | null
 
+  if (img1) img1.src = urls.primary
+  if (img2) img2.src = urls.background
+  if (img3) img3.src = urls.logo
   // Create an array of promises for image loading
   const imagePromises = [img1, img2, img3].map((img, index) => {
     if (!img) return Promise.resolve()
@@ -117,6 +119,8 @@ async function downloadZip(): Promise<void> {
     alert('Please enter a valid Steam APP_ID.')
     return
   }
+
+  console.log('Starting download zip for', appId)
 
   // Get URLs and file names based on current mode
   const urls = getSteamArtUrls(appId, currentMode)
@@ -158,92 +162,35 @@ async function downloadZip(): Promise<void> {
   }
 }
 
-function createMainAppHTML(): void {
-  const container = document.querySelector('.container')
-  if (!container) return
-
-  container.innerHTML = `
-    <div class="search-section">
-      <h1>Steam Game Art Downloader</h1>
-      <p>Search for a game to view its art</p>
-      <div id="autocomplete-container"></div>
-      <div class="controls">
-        <div class="toggle-container">
-          <label class="switch">
-            <input type="checkbox" id="toggleMode" />
-            <span class="slider"></span>
-          </label>
-          <span id="toggleLabel">Vertical</span>
-        </div>
-        <button class="zip-button">Download All as ZIP</button>
-      </div>
-    </div>
-    <div class="preview" id="previewArea">
-      <div class="preview-item">
-        <div class="image-container">
-          <img id="img1" src="" alt="Image 1" onerror="this.src=''" />
-          <div class="overlay">
-            <h3 id="img1Title">Game Cover</h3>
-            <a id="img1Download" class="download-button" href="#" download>
-              <span class="icon">⬇️</span>
-              <span class="text">Download</span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="preview-item">
-        <div class="image-container">
-          <img id="img2" src="" alt="Image 2" onerror="this.src=''" />
-          <div class="overlay">
-            <h3 id="img2Title">Game Page Background</h3>
-            <a id="img2Download" class="download-button" href="#" download>
-              <span class="icon">⬇️</span>
-              <span class="text">Download</span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="preview-item">
-        <div class="image-container">
-          <img id="img3" src="" alt="Image 3" onerror="this.src=''" />
-          <div class="overlay">
-            <h3 id="img3Title">Game Logo</h3>
-            <a id="img3Download" class="download-button" href="#" download>
-              <span class="icon">⬇️</span>
-              <span class="text">Download</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
-}
-
-function setupEventListeners(): void {
-  const toggleMode = document.getElementById('toggleMode') as HTMLInputElement
-  const zipButton = document.querySelector('.zip-button')
-  const autocompleteContainer = document.getElementById('autocomplete-container')
-
-  if (!toggleMode || !zipButton || !autocompleteContainer) return
-
-  toggleMode.addEventListener('change', handleToggleMode)
-  zipButton.addEventListener('click', downloadZip)
-
-  // Initialize AutocompleteInput
-  const autocompleteInput = new AutocompleteInput((game: SteamGame) => {
-    console.log('game', game)
-    updateImages()
-  })
-  console.log('autocompleteInput', autocompleteInput)
-
-  // if (autocompleteInput) {
-  // autocompleteContainer.appendChild(autocompleteInput)
-  // }
-}
-
 // Initialize event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  createMainAppHTML()
-  setupEventListeners()
+  // Remove loading class from body
   document.body.classList.remove('loading')
+
+  const toggleModeSwitch = document.getElementById('toggleMode') as HTMLInputElement | null
+  const zipButton = document.querySelector<HTMLButtonElement>('.zip-button')
+  const showArtButton = document.querySelector<HTMLButtonElement>('.show-art-button')
+  const appIdInput = document.querySelector<HTMLInputElement>('#appIdInput')
+
+  if (!toggleModeSwitch || !zipButton || !showArtButton) {
+    if (!toggleModeSwitch || !zipButton || !showArtButton || !appIdInput) {
+      console.error('Required DOM elements not found')
+      return
+    }
+
+    // Add Enter key support
+    appIdInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        updateImages()
+      }
+    })
+
+    toggleModeSwitch.addEventListener('change', toggleMode)
+    zipButton.addEventListener('click', downloadZip)
+    showArtButton.addEventListener('click', updateImages)
+
+    // Initialize with default values
+    updateImages()
+  }
 })
