@@ -1,9 +1,10 @@
 import './style.css'
-import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { MODES, getSteamArtUrls, getFileNames } from './utils/steam'
-import { SteamGame } from './types'
+import JSZip from 'jszip'
+
 import { AutocompleteInput } from './components/AutocompleteInput/AutocompleteInput'
+import { SteamGame } from './types'
+import { getSteamArtUrls, getFileNames } from './utils/steam'
 
 // Global state for the current mode
 let currentMode: 'vertical' | 'horizontal' = 'vertical'
@@ -12,7 +13,7 @@ let hasSearched = false
 /**
  * Toggles between vertical and horizontal display modes
  */
-function toggleMode(): void {
+function handleToggleMode(): void {
   const toggle = document.getElementById('toggleMode') as HTMLInputElement | null
   if (!toggle) return
 
@@ -225,17 +226,19 @@ function setupEventListeners(): void {
 
   if (!toggleMode || !zipButton || !autocompleteContainer) return
 
-  toggleMode.addEventListener('change', toggleMode)
+  toggleMode.addEventListener('change', handleToggleMode)
   zipButton.addEventListener('click', downloadZip)
 
   // Initialize AutocompleteInput
-  const autocompleteInput = new AutocompleteInput({
-    onSelect: (game: SteamGame) => {
-      updateImages()
-    }
+  const autocompleteInput = new AutocompleteInput((game: SteamGame) => {
+    console.log('game', game)
+    updateImages()
   })
+  console.log('autocompleteInput', autocompleteInput)
 
-  autocompleteContainer.appendChild(autocompleteInput)
+  // if (autocompleteInput) {
+  // autocompleteContainer.appendChild(autocompleteInput)
+  // }
 }
 
 // Initialize event listeners

@@ -67,4 +67,4 @@ export class LocalStorageCache {
   private isExpired(timestamp: number): boolean {
     return Date.now() - timestamp > this.DEFAULT_TTL
   }
-} 
+}
