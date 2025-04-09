@@ -1,5 +1,6 @@
-import { SteamGame } from '@/types.ts'
-import steamAppList from '@/data/steamAppList.json'
+import './AutocompleteInput.css'
+import { SteamGame }    from '@/types.ts'
+import  steamAppList  from '@/data/steamAppList'
 
 export class AutocompleteInput {
   private container!: HTMLDivElement
@@ -18,7 +19,7 @@ export class AutocompleteInput {
     private onSelect: (game: SteamGame) => void,
     private placeholder = 'Search for a game...',
   ) {
-    this.steamGames = steamAppList.applist.apps
+    this.steamGames = steamAppList
     this.setupElements()
     this.setupEventListeners()
   }
@@ -62,7 +63,6 @@ export class AutocompleteInput {
   }
 
   private setupEventListeners(): void {
-    // Input events
     this.input.addEventListener('input', () => this.handleInput())
     this.input.addEventListener('focus', () => this.handleFocus())
     this.input.addEventListener('blur', () => this.handleBlur())
@@ -153,8 +153,44 @@ export class AutocompleteInput {
       this.results.forEach((game) => {
         const li = document.createElement('li')
         li.className = 'result-item'
-        li.textContent = game.name
-        li.addEventListener('click', () => this.handleGameSelect(game))
+
+        // Create a nicer layout for each result item
+        const gameInfo = document.createElement('div')
+        gameInfo.className = 'game-info'
+
+        // Game title
+        const title = document.createElement('div')
+        title.className = 'game-title'
+        title.textContent = game.name
+
+        // Game ID
+        const id = document.createElement('div')
+        id.className = 'game-id'
+        id.textContent = `App ID: ${game.appid}`
+
+        // Thumbnail (if available)
+        const thumbnail = document.createElement('div')
+        thumbnail.className = 'game-thumbnail'
+        const thumbnailImg = document.createElement('img')
+        thumbnailImg.src = `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/capsule_231x87.jpg`
+        thumbnailImg.alt = game.name
+        thumbnailImg.onerror = () => {
+          // Show a placeholder if image fails to load
+          thumbnail.style.display = 'none'
+        }
+        thumbnail.appendChild(thumbnailImg)
+
+        // Add all elements to the result item
+        gameInfo.appendChild(title)
+        gameInfo.appendChild(id)
+        li.appendChild(thumbnail)
+        li.appendChild(gameInfo)
+
+        // Add click event handler that calls the provided callback
+        li.addEventListener('click', () => {
+          this.handleGameSelect(game)
+        })
+
         this.resultsList.appendChild(li)
       })
       this.resultsList.style.display = 'block'
