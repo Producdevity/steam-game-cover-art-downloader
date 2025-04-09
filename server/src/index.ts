@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 import cors from 'cors'
 import fetch from 'node-fetch'
 
@@ -7,7 +7,7 @@ const port = 3000
 
 app.use(cors())
 
-app.get('/api/steam/apps', async (req, res) => {
+app.get('/api/steam/apps', async (_req: Request, res: Response) => {
   try {
     const response = await fetch(
       'https://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json',
