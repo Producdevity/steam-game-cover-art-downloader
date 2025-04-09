@@ -3,10 +3,13 @@ interface CacheItem<T> {
   timestamp: number
 }
 
+const DAY = 24 * 60 * 60 * 1000
+const WEEK = 7 * DAY
+
 export class LocalStorageCache {
   private static instance: LocalStorageCache
   private cache: Map<string, CacheItem<unknown>>
-  private readonly DEFAULT_TTL = 24 * 60 * 60 * 1000 // 24 hours
+  private readonly DEFAULT_TTL = WEEK
 
   private constructor() {
     this.cache = new Map()
@@ -19,7 +22,7 @@ export class LocalStorageCache {
     return LocalStorageCache.instance
   }
 
-  public set<T>(key: string, data: T, ttl: number = this.DEFAULT_TTL): void {
+  public set<T>(key: string, data: T): void {
     const item: CacheItem<T> = {
       data,
       timestamp: Date.now(),
@@ -64,7 +67,7 @@ export class LocalStorageCache {
     }
   }
 
-  private isExpired(timestamp: number): boolean {
-    return Date.now() - timestamp > this.DEFAULT_TTL
+  private isExpired(timestamp: number, ttl: number = this.DEFAULT_TTL): boolean {
+    return Date.now() - timestamp > ttl
   }
 }
