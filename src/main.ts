@@ -39,6 +39,7 @@ function toggleMode(): void {
     }
   }
 
+  // TODO: why did I do this?
   updateImages()
   if (hasSearched) {
     updateImages()
@@ -170,9 +171,8 @@ async function downloadZip(): Promise<void> {
 function handleGameSelect(game: SteamGame): void {
   const appIdInput = document.querySelector<HTMLInputElement>('#appIdInput')
   if (!appIdInput) return
-
   appIdInput.value = game.appid.toString()
-  // Optionally update images immediately after selection
+
   updateImages()
 }
 
@@ -192,13 +192,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return
   }
 
-  // Initialize the autocomplete component
   const autocomplete = new AutocompleteInput(handleGameSelect, 'Search for a Steam game...')
   const autocompleteElement = autocomplete.getElement()
 
   inputGroupContainer.appendChild(autocompleteElement)
 
-  // Add Enter key support
+  // TODO: Replace with form subsission
+  // Add Enter key support (replace with Form submission later)
   appIdInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       event.preventDefault()
