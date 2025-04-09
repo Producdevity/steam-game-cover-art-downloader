@@ -1,6 +1,9 @@
 import './AutocompleteInput.css'
-import { SteamGame }    from '@/types.ts'
-import  steamAppList  from '@/data/steamAppList'
+import fuzzySearch           from '@/components/AutocompleteInput/utils/fuzzySearch'
+import highlightMatches      from '@/components/AutocompleteInput/utils/highlightMatches'
+import { FuzzySearchResult } from '@/components/AutocompleteInput/utils/types'
+import { SteamGame } from '@/types'
+import steamAppList from '@/data/steamAppList'
 
 export class AutocompleteInput {
   private container!: HTMLDivElement
@@ -10,6 +13,7 @@ export class AutocompleteInput {
   private errorMessage!: HTMLDivElement
   private isOpen = false
   private results: SteamGame[] = []
+  private fuzzyResults: FuzzySearchResult<SteamGame>[] = []
   private isLoading = false
   private error: string | null = null
   private debounceTimeout: number | null = null
@@ -82,6 +86,7 @@ export class AutocompleteInput {
     this.debounceTimeout = window.setTimeout(() => {
       if (!query) {
         this.results = []
+        this.fuzzyResults = []
         this.updateResultsList()
         return
       }
@@ -91,8 +96,9 @@ export class AutocompleteInput {
       this.updateUI()
 
       try {
-        // Search games from the local JSON data
-        this.results = this.searchGames(query)
+        // Search games using fuzzy search
+        this.fuzzyResults = this.searchGames(query)
+        this.results = this.fuzzyResults.map(result => result.item)
         this.updateResultsList()
       } catch (err) {
         this.error = 'Failed to search games. Please try again.'
@@ -104,13 +110,17 @@ export class AutocompleteInput {
     }, 300)
   }
 
-  private searchGames(query: string): SteamGame[] {
-    const lowercaseQuery = query.toLowerCase()
-
-    // Filter games matching the query and limit to exactly 5 results
-    return this.steamGames
-      .filter((game) => game.name.toLowerCase().includes(lowercaseQuery))
-      .slice(0, 5)
+  private searchGames(query: string): FuzzySearchResult<SteamGame>[] {
+    return fuzzySearch(
+      this.steamGames,
+      query,
+      (game) => game.name,
+      {
+        threshold: 0.2,
+        limit: 5,
+        includeMatches: true
+      }
+    )
   }
 
   private handleFocus(): void {
@@ -148,9 +158,10 @@ export class AutocompleteInput {
   }
 
   private updateResultsList(): void {
-    if (this.isOpen && this.results.length > 0) {
+    if (this.isOpen && this.fuzzyResults.length > 0) {
       this.resultsList.innerHTML = ''
-      this.results.forEach((game) => {
+      this.fuzzyResults.forEach((result) => {
+        const game = result.item
         const li = document.createElement('li')
         li.className = 'result-item'
 
@@ -158,15 +169,15 @@ export class AutocompleteInput {
         const gameInfo = document.createElement('div')
         gameInfo.className = 'game-info'
 
-        // Game title
+        // Game title with highlighted matches
         const title = document.createElement('div')
         title.className = 'game-title'
-        title.textContent = game.name
+        title.innerHTML = highlightMatches(game.name, result.matches)
 
-        // Game ID
+        // Game ID and score
         const id = document.createElement('div')
         id.className = 'game-id'
-        id.textContent = `App ID: ${game.appid}`
+        id.textContent = `App ID: ${game.appid} (Score: ${result.score.toFixed(2)})`
 
         // Thumbnail (if available)
         const thumbnail = document.createElement('div')

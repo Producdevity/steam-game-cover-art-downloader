@@ -1,5 +1,5 @@
-import { SteamGame } from '@/types.ts'
-import { LocalStorageCache } from '@/utils/cache/localStorage.ts'
+import { SteamGame } from '@/types'
+import { LocalStorageCache } from '@/utils/cache/localStorage'
 
 const CACHE_KEY = 'steam_games_list'
 const STEAM_API_URL =
