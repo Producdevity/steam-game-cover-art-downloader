@@ -18,9 +18,7 @@ function fuzzySearch<T>(
 ): FuzzySearchResult<T>[] {
   const { threshold = 0.6, limit = 5, includeMatches = false, caseSensitive = false } = options
 
-  if (!query || query.length === 0) {
-    return []
-  }
+  if (!query || query.length === 0) return []
 
   const results: FuzzySearchResult<T>[] = []
   const searchQuery = caseSensitive ? query : query.toLowerCase()
