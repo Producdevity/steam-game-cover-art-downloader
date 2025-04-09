@@ -2,6 +2,8 @@ import './style.css'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 import { MODES, getSteamArtUrls, getFileNames } from './utils/steam'
+import { AutocompleteInput } from './components/AutocompleteInput/AutocompleteInput'
+import { SteamGame } from './types'
 
 // Global state for the current mode
 let currentMode = MODES.VERTICAL
@@ -162,6 +164,18 @@ async function downloadZip(): Promise<void> {
   }
 }
 
+/**
+ * Handles the selection of a game from the autocomplete
+ */
+function handleGameSelect(game: SteamGame): void {
+  const appIdInput = document.querySelector<HTMLInputElement>('#appIdInput')
+  if (!appIdInput) return
+
+  appIdInput.value = game.appid.toString()
+  // Optionally update images immediately after selection
+  updateImages()
+}
+
 // Initialize event listeners
 document.addEventListener('DOMContentLoaded', () => {
   // Remove loading class from body
@@ -171,11 +185,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const zipButton = document.querySelector<HTMLButtonElement>('.zip-button')
   const showArtButton = document.querySelector<HTMLButtonElement>('.show-art-button')
   const appIdInput = document.querySelector<HTMLInputElement>('#appIdInput')
+  const inputGroupContainer = document.querySelector<HTMLDivElement>('.input-group-container')
 
-  if (!toggleModeSwitch || !zipButton || !showArtButton || !appIdInput) {
+  if (!toggleModeSwitch || !zipButton || !showArtButton || !appIdInput || !inputGroupContainer) {
     console.error('Required DOM elements not found')
     return
   }
+
+  // Initialize the autocomplete component
+  const autocomplete = new AutocompleteInput(handleGameSelect, 'Search for a Steam game...')
+  const autocompleteElement = autocomplete.getElement()
+
+
+  inputGroupContainer.appendChild(autocompleteElement)
 
   // Add Enter key support
   appIdInput.addEventListener('keypress', (event) => {

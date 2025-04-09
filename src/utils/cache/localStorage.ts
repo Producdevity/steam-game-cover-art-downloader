@@ -1,73 +1,64 @@
-interface CacheItem<T> {
-  data: T
-  timestamp: number
-}
-
-const DAY = 24 * 60 * 60 * 1000
-const WEEK = 7 * DAY
-
 export class LocalStorageCache {
-  private static instance: LocalStorageCache
-  private cache: Map<string, CacheItem<unknown>>
-  private readonly DEFAULT_TTL = WEEK
+  private static instance: LocalStorageCache;
+  private readonly expirationKey = '_expires_at';
 
-  private constructor() {
-    this.cache = new Map()
-  }
+  private constructor() {}
 
   public static getInstance(): LocalStorageCache {
     if (!LocalStorageCache.instance) {
-      LocalStorageCache.instance = new LocalStorageCache()
+      LocalStorageCache.instance = new LocalStorageCache();
     }
-    return LocalStorageCache.instance
+    return LocalStorageCache.instance;
   }
 
-  public set<T>(key: string, data: T): void {
-    const item: CacheItem<T> = {
-      data,
-      timestamp: Date.now(),
+  public set<T>(key: string, value: T, ttl: number = 24 * 60 * 60 * 1000): void {
+    const expires = Date.now() + ttl;
+    const item = {
+      value,
+      [this.expirationKey]: expires
+    };
+
+    try {
+      localStorage.setItem(key, JSON.stringify(item));
+    } catch (error) {
+      console.error('Error setting localStorage item:', error);
     }
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem(key, JSON.stringify(item))
-    }
-    this.cache.set(key, item)
   }
 
   public get<T>(key: string): T | null {
-    const item = this.cache.get(key) || this.getItemFromStorage(key)
-    if (!item) return null
+    try {
+      const item = localStorage.getItem(key);
+      if (!item) return null;
 
-    if (this.isExpired(item.timestamp)) {
-      this.remove(key)
-      return null
+      const parsedItem = JSON.parse(item);
+      const now = Date.now();
+
+      // Check if the item has expired
+      if (parsedItem[this.expirationKey] && parsedItem[this.expirationKey] < now) {
+        this.remove(key);
+        return null;
+      }
+
+      return parsedItem.value as T;
+    } catch (error) {
+      console.error('Error getting localStorage item:', error);
+      return null;
     }
-
-    return item.data as T
   }
 
   public remove(key: string): void {
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(key)
-    }
-    this.cache.delete(key)
-  }
-
-  private getItemFromStorage(key: string): CacheItem<unknown> | null {
-    if (typeof window === 'undefined') return null
-
-    const item = window.localStorage.getItem(key)
-    if (!item) return null
-
     try {
-      const parsed = JSON.parse(item) as CacheItem<unknown>
-      this.cache.set(key, parsed)
-      return parsed
-    } catch {
-      return null
+      localStorage.removeItem(key);
+    } catch (error) {
+      console.error('Error removing localStorage item:', error);
     }
   }
 
-  private isExpired(timestamp: number, ttl: number = this.DEFAULT_TTL): boolean {
-    return Date.now() - timestamp > ttl
+  public clear(): void {
+    try {
+      localStorage.clear();
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+    }
   }
 }

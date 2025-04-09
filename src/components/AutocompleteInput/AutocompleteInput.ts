@@ -1,5 +1,5 @@
-import { SteamService } from '../../services/steamService'
-import { SteamGame } from '../../types'
+import { SteamGame } from '@/types.ts'
+import steamAppList from '@/data/steamAppList.json'
 
 export class AutocompleteInput {
   private container!: HTMLDivElement
@@ -12,13 +12,13 @@ export class AutocompleteInput {
   private isLoading = false
   private error: string | null = null
   private debounceTimeout: number | null = null
-  private steamService: SteamService
+  private steamGames: SteamGame[] = []
 
   constructor(
     private onSelect: (game: SteamGame) => void,
     private placeholder = 'Search for a game...',
   ) {
-    this.steamService = SteamService.getInstance()
+    this.steamGames = steamAppList.applist.apps
     this.setupElements()
     this.setupEventListeners()
   }
@@ -79,7 +79,7 @@ export class AutocompleteInput {
       window.clearTimeout(this.debounceTimeout)
     }
 
-    this.debounceTimeout = window.setTimeout(async () => {
+    this.debounceTimeout = window.setTimeout(() => {
       if (!query) {
         this.results = []
         this.updateResultsList()
@@ -91,16 +91,26 @@ export class AutocompleteInput {
       this.updateUI()
 
       try {
-        this.results = await this.steamService.searchGames(query)
+        // Search games from the local JSON data
+        this.results = this.searchGames(query)
         this.updateResultsList()
       } catch (err) {
-        this.error = 'Failed to fetch games. Please try again.'
+        this.error = 'Failed to search games. Please try again.'
         console.error('Search error:', err)
       } finally {
         this.isLoading = false
         this.updateUI()
       }
     }, 300)
+  }
+
+  private searchGames(query: string): SteamGame[] {
+    const lowercaseQuery = query.toLowerCase()
+
+    // Filter games matching the query and limit to exactly 5 results
+    return this.steamGames
+      .filter((game) => game.name.toLowerCase().includes(lowercaseQuery))
+      .slice(0, 5)
   }
 
   private handleFocus(): void {
