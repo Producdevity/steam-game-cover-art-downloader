@@ -4,6 +4,7 @@ import { saveAs } from 'file-saver'
 import { MODES, getSteamArtUrls, getFileNames } from './utils/steam'
 import { AutocompleteInput } from './components/AutocompleteInput/AutocompleteInput'
 import { SteamGame } from './types'
+import { inject } from '@vercel/analytics'
 
 // Global state for the current mode
 let currentMode = MODES.VERTICAL
@@ -178,6 +179,7 @@ function handleGameSelect(game: SteamGame): void {
 
 // Initialize event listeners
 document.addEventListener('DOMContentLoaded', () => {
+  inject()
   // Remove loading class from body
   document.body.classList.remove('loading')
 
