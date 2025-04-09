@@ -2,8 +2,8 @@ import './AutocompleteInput.css'
 import fuzzySearch from '@/components/AutocompleteInput/utils/fuzzySearch'
 import highlightMatches from '@/components/AutocompleteInput/utils/highlightMatches'
 import { FuzzySearchResult } from '@/components/AutocompleteInput/utils/types'
-import { SteamGame } from '@/types'
-import steamAppList from '@/data/steamAppList'
+import fetchSteamAppList from '@/services/fetchSteamAppList.ts'
+import { SteamAppList, SteamGame } from '@/types'
 
 export class AutocompleteInput {
   private container!: HTMLDivElement
@@ -23,9 +23,23 @@ export class AutocompleteInput {
     private onSelect: (game: SteamGame) => void,
     private placeholder = 'Search for a game...',
   ) {
-    this.steamGames = steamAppList
+    this.steamGames = []
+    this.fetchSteamAppList()
     this.setupElements()
     this.setupEventListeners()
+  }
+
+  private fetchSteamAppList(): void {
+    // Fetch the Steam app list from the public directory
+    fetchSteamAppList()
+      .then((data: SteamAppList) => {
+        const steamGames = data.applist?.apps
+        if (!steamGames) {
+          throw new Error('No games found in the Steam app list')
+        }
+        this.steamGames = steamGames || []
+      })
+      .catch((error) => console.error('Error fetching Steam app list:', error))
   }
 
   private setupElements(): void {

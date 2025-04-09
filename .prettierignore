@@ -1,5 +1,4 @@
 node_modules/
-src/db/steamAppList.json
 public/
 .vscode/
 .idea/
