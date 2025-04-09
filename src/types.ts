@@ -16,3 +16,10 @@ export interface SteamGame {
   appid: number
   name: string
 }
+
+export interface SteamAppList {
+  applist: {
+    apps: SteamGame[]
+  }
+}
+
