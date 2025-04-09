@@ -16,6 +16,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "updateGameList": "./scripts/updateGamesList.sh",
+    "vercel:build": "npm run updateGameList && npm run build",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "typecheck": "tsc --noEmit"
