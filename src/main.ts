@@ -196,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const autocomplete = new AutocompleteInput(handleGameSelect, 'Search for a Steam game...')
   const autocompleteElement = autocomplete.getElement()
 
-
   inputGroupContainer.appendChild(autocompleteElement)
 
   // Add Enter key support
