@@ -35,7 +35,7 @@ function fuzzySearch<T>(
       results.push({
         item,
         score,
-        ...(includeMatches && { matches }),
+        matches: includeMatches ? matches : [],
       })
     }
   }

@@ -1,18 +1,12 @@
 export interface FuzzySearchOptions {
-  threshold?: number
-  limit?: number
-  includeMatches?: boolean
-  caseSensitive?: boolean
-}
-
-export interface Match {
-  start: number
-  end: number
-  indices: number[]
+  threshold?: number;
+  limit?: number;
+  includeMatches?: boolean;
+  caseSensitive?: boolean;
 }
 
 export interface FuzzySearchResult<T> {
-  item: T
-  score: number
-  matches?: Match[]
+  item: T;
+  score: number;
+  matches: number[];
 }

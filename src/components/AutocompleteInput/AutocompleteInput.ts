@@ -1,6 +1,6 @@
 import './AutocompleteInput.css'
-import fuzzySearch           from '@/components/AutocompleteInput/utils/fuzzySearch'
-import highlightMatches      from '@/components/AutocompleteInput/utils/highlightMatches'
+import fuzzySearch from '@/components/AutocompleteInput/utils/fuzzySearch'
+import highlightMatches from '@/components/AutocompleteInput/utils/highlightMatches'
 import { FuzzySearchResult } from '@/components/AutocompleteInput/utils/types'
 import { SteamGame } from '@/types'
 import steamAppList from '@/data/steamAppList'
@@ -98,7 +98,7 @@ export class AutocompleteInput {
       try {
         // Search games using fuzzy search
         this.fuzzyResults = this.searchGames(query)
-        this.results = this.fuzzyResults.map(result => result.item)
+        this.results = this.fuzzyResults.map((result) => result.item)
         this.updateResultsList()
       } catch (err) {
         this.error = 'Failed to search games. Please try again.'
@@ -111,16 +111,11 @@ export class AutocompleteInput {
   }
 
   private searchGames(query: string): FuzzySearchResult<SteamGame>[] {
-    return fuzzySearch(
-      this.steamGames,
-      query,
-      (game) => game.name,
-      {
-        threshold: 0.2,
-        limit: 5,
-        includeMatches: true
-      }
-    )
+    return fuzzySearch(this.steamGames, query, (game) => game.name, {
+      threshold: 0.15, // Lower threshold to catch more matches
+      limit: 5,
+      includeMatches: true, // We need matches for highlighting
+    })
   }
 
   private handleFocus(): void {
