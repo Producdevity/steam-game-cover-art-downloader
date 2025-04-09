@@ -172,25 +172,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const showArtButton = document.querySelector<HTMLButtonElement>('.show-art-button')
   const appIdInput = document.querySelector<HTMLInputElement>('#appIdInput')
 
-  if (!toggleModeSwitch || !zipButton || !showArtButton) {
-    if (!toggleModeSwitch || !zipButton || !showArtButton || !appIdInput) {
-      console.error('Required DOM elements not found')
-      return
-    }
-
-    // Add Enter key support
-    appIdInput.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        updateImages()
-      }
-    })
-
-    toggleModeSwitch.addEventListener('change', toggleMode)
-    zipButton.addEventListener('click', downloadZip)
-    showArtButton.addEventListener('click', updateImages)
-
-    // Initialize with default values
-    updateImages()
+  if (!toggleModeSwitch || !zipButton || !showArtButton || !appIdInput) {
+    console.error('Required DOM elements not found')
+    return
   }
+
+  // Add Enter key support
+  appIdInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      updateImages()
+    }
+  })
+
+  toggleModeSwitch.addEventListener('change', toggleMode)
+  zipButton.addEventListener('click', downloadZip)
+  showArtButton.addEventListener('click', updateImages)
+
+  // Initialize with default values
+  updateImages()
 })
