@@ -1,27 +1,14 @@
 import './style.css'
 import { MODES, getState } from './state/store'
 import { AutocompleteInput } from './components/AutocompleteInput/AutocompleteInput'
-import { SteamGame } from './types'
 import { inject } from '@vercel/analytics'
 import updateImages from './utils/ui/updateImages'
 import toggleMode from './utils/ui/toggleMode'
 import downloadZip from './utils/ui/downloadZip'
+import handleGameSelect from './utils/ui/handleGameSelect'
 
-/**
- * Handles the selection of a game from the autocomplete
- */
-function handleGameSelect(game: SteamGame): void {
-  const appIdInput = document.querySelector<HTMLInputElement>('#appIdInput')
-  if (!appIdInput) return
-  appIdInput.value = game.appid.toString()
-
-  updateImages()
-}
-
-// Initialize event listeners
 document.addEventListener('DOMContentLoaded', () => {
   inject()
-  // Remove loading class from body
   document.body.classList.remove('loading')
 
   const toggleModeSwitch = document.getElementById('toggleMode') as HTMLInputElement | null
@@ -61,9 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('toggleMode') as HTMLInputElement | null
   const toggleLabel = document.getElementById('toggleLabel')
   if (toggle && toggleLabel) {
-      toggle.checked = initialMode === MODES.HORIZONTAL
-      toggleLabel.innerText = initialMode === MODES.HORIZONTAL ? 'Horizontal' : 'Vertical'
-      // Update titles based on initial mode
-      toggleMode() // Call toggleMode once to set initial titles based on the state
+    toggle.checked = initialMode === MODES.HORIZONTAL
+    toggleLabel.innerText = initialMode === MODES.HORIZONTAL ? 'Horizontal' : 'Vertical'
+    // Update titles based on initial mode
+    toggleMode() // Call toggleMode once to set initial titles based on the state
   }
 })
